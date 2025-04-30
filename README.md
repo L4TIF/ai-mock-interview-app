@@ -58,8 +58,6 @@ To keep your fork up to date with the original repo:
 git remote add upstream https://github.com/L4TIF/ai-mock-interview-app.git
 ```
 
-Replace original-owner with the username of the original repository owner.
-
 ### 2️⃣ Fetch and Pull Latest Changes
 Before starting new work, always sync your fork with the main project:
 
