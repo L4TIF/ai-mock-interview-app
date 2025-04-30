@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎙️ AI Mock Interview App
 
-## Getting Started
+A full-stack AI-powered mock interview web application built using **Next.js**, **PostgreSQL**, **Gemini API**, **Drizzle ORM**, **Tailwind CSS**, and **shadcn/ui** components. This app allows users to simulate job interviews by interacting with an AI, track performance, and improve their interview skills.
 
-First, run the development server:
+---
+
+## 🚀 Tech Stack
+
+- **Next.js** — React framework for server-side rendering and routing  
+- **PostgreSQL** — Relational database  
+- **Drizzle ORM** — Type-safe ORM for database interaction  
+- **Gemini API** — AI model for generating interview questions and responses  
+- **Tailwind CSS** — Utility-first CSS framework  
+- **shadcn/ui** — Accessible and customizable UI components  
+
+---
+
+## 📦 Getting Started
+
+Follow these steps to set up the project on your local machine:
+
+### 1️⃣ Fork the Repository
+
+Click on the **Fork** button at the top-right corner of this page to create your own copy.
+
+### 2️⃣ Clone Your Fork
+
+```bash
+git clone https://github.com/L4TIF/ai-mock-interview-app.git
+```
+
+### 3️⃣ Navigate to the Project Directory
+
+```bash
+cd ai-mock-interview-app
+```
+
+### 4️⃣ Install Dependencies
+Make sure you have Node.js and npm installed. Then run:
+
+```bash
+npm install
+```
+
+### 6️⃣ Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🌱 Contributing
+We welcome contributions from everyone! To contribute:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 1️⃣ Create a New Branch
+Always work on a new branch for your feature or fix.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+git checkout -b feature/your-feature-name
+```
+Example:
 
-## Learn More
+```bash
+git checkout -b fix/chat-response-delay
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 2️⃣ Make Your Changes
+Implement your feature, fix, or improvement.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3️⃣ Stage and Commit
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git add .
+git commit -m "feat: add your meaningful commit message"
+```
 
-## Deploy on Vercel
+### 4️⃣ Push Your Branch
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git push origin feature/your-feature-name
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 5️⃣ Create a Pull Request
+Go to your forked repo on GitHub.
+
+Click Compare & pull request.
+
+Provide a clear, descriptive title and summary of your changes.
+
+Click Create pull request.
+
+📃 License
+This project is licensed under the MIT License.
+
+📢 Support & Feedback
+If you find this project useful, give it a ⭐️!
+For any issues, bugs, or feature requests, feel free to open an Issue.
+
+
