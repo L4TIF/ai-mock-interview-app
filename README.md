@@ -57,6 +57,7 @@ Always work on a new branch for your feature or fix.
 ```bash
 git checkout -b feature/your-feature-name
 ```
+
 Example:
 
 ```bash
