@@ -51,7 +51,24 @@ npm run dev
 ### 🌱 Contributing
 We welcome contributions from everyone! To contribute:
 
-### 1️⃣ Create a New Branch
+### 1️⃣ Set Remote Upstream (First Time Only)
+To keep your fork up to date with the original repo:
+
+```bash
+git remote add upstream https://github.com/L4TIF/ai-mock-interview-app.git
+```
+
+Replace original-owner with the username of the original repository owner.
+
+### 2️⃣ Fetch and Pull Latest Changes
+Before starting new work, always sync your fork with the main project:
+
+```bash
+git fetch upstream
+git pull upstream main
+```
+
+### 3️⃣ Create a New Branch
 Always work on a new branch for your feature or fix.
 
 ```bash
@@ -64,23 +81,23 @@ Example:
 git checkout -b fix/chat-response-delay
 ```
 
-### 2️⃣ Make Your Changes
+### 4️⃣ Make Your Changes
 Implement your feature, fix, or improvement.
 
-### 3️⃣ Stage and Commit
+### 5️⃣ Stage and Commit
 
 ```bash
 git add .
 git commit -m "feat: add your meaningful commit message"
 ```
 
-### 4️⃣ Push Your Branch
+### 6️⃣ Push Your Branch
 
 ```bash
 git push origin feature/your-feature-name
 ```
 
-### 5️⃣ Create a Pull Request
+### 7️⃣ Create a Pull Request
 Go to your forked repo on GitHub.
 
 Click Compare & pull request.
