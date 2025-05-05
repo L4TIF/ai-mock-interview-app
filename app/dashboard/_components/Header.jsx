@@ -2,13 +2,15 @@
 import { UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import React, { useEffect } from 'react'
 
 const Header = () => {
     const path = usePathname()
     return (
         <div className='flex bg-secondary shadow-sm items-center justify-between p-4 '>
-            <Image src={'/logo.svg'} width={80} height={100} alt='logo'></Image>
+
+
+            <Image src={'/logo.svg'} priority width={80} height={100} alt='logo' />
+
             <ul className='hidden md:flex gap-6 '>
                 <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
                     ${path === '/dashboard' && 'text-primary font-bold'}
