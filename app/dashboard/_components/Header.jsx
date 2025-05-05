@@ -6,12 +6,6 @@ import React, { useEffect } from 'react'
 
 const Header = () => {
     const path = usePathname()
-
-    useEffect(() => {
-        console.log(path);
-
-    }, [])
-
     return (
         <div className='flex bg-secondary shadow-sm items-center justify-between p-4 '>
             <Image src={'/logo.svg'} width={80} height={100} alt='logo'></Image>
@@ -30,7 +24,7 @@ const Header = () => {
                     `}>How it Works?</li>
             </ul>
             <div className='scale-150'>
-            <UserButton />
+                <UserButton />
             </div>
         </div>
     )
