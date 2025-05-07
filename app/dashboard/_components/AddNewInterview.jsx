@@ -8,13 +8,22 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button, Input, Textarea } from '@/components/ui';
+
 
 
 
 const AddNewInterview = () => {
     const [openDialog, setOpenDialog] = useState(false);
+    const [jobRole, setJobRole] = useState('')
+    const [jobDescription, setJobDescription] = useState('')
+    const [jobExperience, setJobExperience] = useState(0)
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        console.log(jobRole, jobDescription, jobExperience);
+
+    }
 
     return (
         <div>
@@ -32,20 +41,41 @@ const AddNewInterview = () => {
                     <DialogHeader >
                         <DialogTitle className='text-2xl'>
                             Tell us more about Job you are interviewing
-                            <p className='text-gray-500 text-sm'>Add Details about job position, Your skills and Years of exprerience</p>
+
 
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className='text-gray-500 text-sm'>
+                            Add Details about job position, Your skills and Years of exprerience
+                        </DialogDescription>
+
+                        <form action="" onSubmit={onSubmit}>
+
                             <div>
                                 <label htmlFor="job-role">Job Role/Job Position</label>
-                                <Input id='job-role' />
+                                <Input placeholder='Ex. Full Stack Developer' id='job-role' required
+                                    onChange={(e) => setJobRole(e.target.value)}
+                                />
+                            </div>
+                            <div className='my-3'>
+                                <label htmlFor="job-desc">Job Discription/ Tech Stack (In Short)</label>
+                                <Textarea placeholder='Ex. React, Angular, NodeJs, MySql etc' id='job-desc' required
+                                    onChange={(e) => setJobDescription(e.target.value)}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="Year-Of-Exp">Years of exprerience</label>
+                                <Input placeholder='Ex. 2' id='Year-Of-Exp' type={'number'} max='30' min='0' required
+                                    onChange={(e) => setJobExperience(e.target.value)}
+                                />
                             </div>
 
-                        </DialogDescription>
-                        <div className='flex gap-5 justify-end'>
-                            <Button variant={'ghost'} onClick={() => setOpenDialog(false)}>Cancel</Button>
-                            <Button>Start Interview</Button>
-                        </div>
+                            <div className='flex gap-5 justify-end mt-3'>
+                                <Button type='button' variant={'ghost'} onClick={() => setOpenDialog(false)}>Cancel</Button>
+                                <Button type='Submit'>Start Interview</Button>
+                            </div>
+                        </form>
+
+
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
