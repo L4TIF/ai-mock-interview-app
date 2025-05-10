@@ -16,7 +16,7 @@ import { MockInterview } from '@/utils/schema';
 import { v4 as uuidv4 } from 'uuid';
 import { useUser } from '@clerk/nextjs';
 import moment from 'moment';
-
+import { useRouter } from 'next/navigation';
 
 
 
@@ -29,7 +29,7 @@ const AddNewInterview = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [JsonResponse, setJsonResponse] = useState([])
     const { user } = useUser();
-
+    const router = useRouter();
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -49,14 +49,17 @@ const AddNewInterview = () => {
                         jobPosition: jobRole,
                         createdBy: user?.primaryEmailAddress?.emailAddress,
                         createdAt: moment().format('DD-MM-YYYY'),
-                        
+
                     })
                     .returning({
                         mockID: MockInterview.mockId
                     })
 
                 console.log("Inserted Successfully", dbRes);
-                if (dbRes) setOpenDialog(false)
+                if (dbRes) {
+                    setOpenDialog(false)
+                    router.push(`/dashboard/interview/${dbRes[0].mockID}`)
+                }
             }
 
         } catch (error) {

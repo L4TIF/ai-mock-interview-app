@@ -2,28 +2,37 @@
 import { UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-
+import { useRouter } from 'next/navigation'
 const Header = () => {
     const path = usePathname()
+    const router = useRouter()
     return (
         <div className='flex bg-secondary shadow-sm items-center justify-between p-4 '>
 
 
-            <Image src={'/logo.svg'} priority width={80} height={100} alt='logo' />
+            <Image src={'/logo.svg'} priority width={80} height={100} alt='logo' onClick={() => router.push('/dashboard')} />
 
             <ul className='hidden md:flex gap-6 '>
                 <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
                     ${path === '/dashboard' && 'text-primary font-bold'}
-                    `}>Dashboard</li>
+                    `} onClick={() => router.push('/dashboard')}
+                >Dashboard</li>
+
                 <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
                     ${path === '/questions' && `text-primary`}
-                    `}>Questions</li>
+                    `} onClick={() => router.push('/questions')}
+                >Questions</li>
+
                 <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
                     ${path === '/upgrade' && `text-primary`}
-                    `}>Upgrade</li>
+                    `} onClick={() => router.push('/upgrade')}
+                >Upgrade</li>
+
                 <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
                     ${path === '/how-it-works' && `text-primary`}
-                    `}>How it Works?</li>
+                    `} onClick={() => router.push('/how-it-works')}
+                >How it Works?</li>
+
             </ul>
             <div className='scale-150'>
                 <UserButton />
