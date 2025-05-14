@@ -26,7 +26,7 @@ const Interview = ({ params }) => {
     if (isLoading) {
         return <div>Loading...</div>
     }
-    // continue with react webcam setup
+   
     return (
         <>
             <div className='my-10 '>
@@ -45,10 +45,10 @@ const Interview = ({ params }) => {
                         </div>
                     </div>
 
-                    <div >
+                    <div className='flex flex-col items-center justify-between my-5'>
                         {isWebcamOpen ? (
                             <Webcam
-                                className='rounded-lg my-5'
+                                className='rounded-lg my-5 w-full h-72'
                                 mirrored={true}
                                 audio={true}
                                 width={450}
@@ -63,8 +63,8 @@ const Interview = ({ params }) => {
                                 }}
                             />
                         ) : (
-                            <>
-                                <WebcamIcon className='w-full h-72 my-5 p-20 border bg-secondary rounded-lg' />
+                            < >
+                                <WebcamIcon className='w-full h-72  p-20 border bg-secondary rounded-lg mb-5' />
                                 <Button variant='outline' className='w-full' onClick={() => setIsWebcamOpen(true)}>Open Webcam and microphone</Button>
                             </>
                         )}
