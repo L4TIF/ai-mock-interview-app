@@ -39,6 +39,7 @@ const AddNewInterview = () => {
         try {
             const result = await GenerateQA(InputPrompt)
             if (result) {
+                console.log('response generated', result);
                 setJsonResponse(result)
                 const dbRes = await db.insert(MockInterview)
                     .values({

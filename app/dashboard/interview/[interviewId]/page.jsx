@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { Lightbulb, WebcamIcon } from 'lucide-react';
 import React, { useEffect } from 'react'
 import Webcam from 'react-webcam';
+import Link from 'next/link';
 const Interview = ({ params }) => {
 
     const { interviewId } = React.use(params);
@@ -26,7 +27,7 @@ const Interview = ({ params }) => {
     if (isLoading) {
         return <div>Loading...</div>
     }
-   
+
     return (
         <>
             <div className='my-10 '>
@@ -48,7 +49,7 @@ const Interview = ({ params }) => {
                     <div className='flex flex-col items-center justify-between my-5'>
                         {isWebcamOpen ? (
                             <Webcam
-                                className='rounded-lg my-5 w-full h-72'
+                                className='rounded-lg my-5 w-fit'
                                 mirrored={true}
                                 audio={true}
                                 width={450}
@@ -65,15 +66,21 @@ const Interview = ({ params }) => {
                         ) : (
                             < >
                                 <WebcamIcon className='w-full h-72  p-20 border bg-secondary rounded-lg mb-5' />
-                                <Button variant='outline' className='w-full' onClick={() => setIsWebcamOpen(true)}>Open Webcam and microphone</Button>
+                                <Button variant='outline' className='w-full' onClick={() => setIsWebcamOpen(true)}>Open webcam and microphone</Button>
                             </>
                         )}
                     </div>
 
 
                 </div>
-                <div className='flex justify-end'>
-                    <Button  >Start Interview</Button>
+                <div className={`flex justify-end ${isWebcamOpen ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
+                    {isWebcamOpen ? (
+                        <Link href={`/dashboard/interview/${interviewId}/start`}>
+                            <Button>Start Interview</Button>
+                        </Link>
+                    ) : (
+                        <Button className='w-fit' disabled>Start Interview</Button>
+                    )}
                 </div>
             </div>
         </>
