@@ -46,17 +46,21 @@ const Interview = ({ params }) => {
                         </div>
                     </div>
 
-                    <div className='flex flex-col items-center justify-between my-5'>
+                    <div className='flex flex-col items-center justify-between mb-5 h-[500px]'>
                         {isWebcamOpen ? (
                             <Webcam
-                                className='rounded-lg my-5 w-fit'
+                                className='rounded-lg  '
                                 mirrored={true}
                                 audio={true}
-                                width={450}
-                                height={450}
                                 onUserMediaError={() => {
                                     setIsWebcamOpen(false)
                                     console.log("Error")
+                                }}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    zIndex: 10,
                                 }}
                                 onUserMedia={() => {
                                     setIsWebcamOpen(true)
@@ -65,7 +69,7 @@ const Interview = ({ params }) => {
                             />
                         ) : (
                             < >
-                                <WebcamIcon className='w-full h-72  p-20 border bg-secondary rounded-lg mb-5' />
+                                <WebcamIcon className='w-full h-full  p-20 border bg-secondary rounded-lg mb-5' />
                                 <Button variant='outline' className='w-full' onClick={() => setIsWebcamOpen(true)}>Open webcam and microphone</Button>
                             </>
                         )}

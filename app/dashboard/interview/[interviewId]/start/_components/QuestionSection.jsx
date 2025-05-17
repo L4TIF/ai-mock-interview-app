@@ -1,6 +1,6 @@
-import { Lightbulb } from 'lucide-react'
+import { Lightbulb, Volume2 } from 'lucide-react'
 import React from 'react'
-
+import { textToSpeech } from '@/utils/textToSpeech'
 const QuestionSection = ({ mockInterviewQuestions, activeQuestionIndex, setActiveQuestionIndex }) => {
     return mockInterviewQuestions && (
         <div className='p-5 border rounded-lg my-10'>
@@ -11,7 +11,10 @@ const QuestionSection = ({ mockInterviewQuestions, activeQuestionIndex, setActiv
 
                 ))}
             </div>
-            <h2 className='my-5 text-md md:text-lg  font-bold'>{mockInterviewQuestions[activeQuestionIndex].question}</h2>
+            <h2 className='my-5 text-md md:text-lg '> <strong> Question {activeQuestionIndex + 1}:</strong> {mockInterviewQuestions[activeQuestionIndex].question}</h2>
+
+            <Volume2 className='w-10 h-10 cursor-pointer text-primary hover:text-primary/80 rounded-full p-2 bg-secondary' onClick={() => textToSpeech(mockInterviewQuestions[activeQuestionIndex].question)} />
+
 
 
 
