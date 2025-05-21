@@ -36,7 +36,7 @@ const StartInterview = ({ params }) => {
     }
     return (
         <div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-10'>
+            <div className='flex flex-col-reverse   lg:grid grid-cols-1 md:grid-cols-2 lg:gap-10'>
                 {/* Questions  */}
                 <QuestionSection mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} setActiveQuestionIndex={setActiveQuestionIndex} />
                 {/* Webcam and microphone recording */}

@@ -36,7 +36,7 @@ const RecordAnswerSection = () => {
 
   return (
     <div className='flex items-center justify-center flex-col'>
-      <div className='flex flex-col bg-black items-center justify-center rounded-lg p-5 mt-20 relative h-[500px]'>
+      <div className='flex flex-col bg-black items-center justify-center rounded-lg p-5 mt-5 lg:mt-20 relative h-[350px] lg:h-[500px] w-full'>
         <WebcamIcon className='absolute text-white' width={200} height={200} />
         <div className='flex items-center justify-center w-full h-full'>
           <Webcam
@@ -63,7 +63,7 @@ const RecordAnswerSection = () => {
       <div className='flex items-center justify-center gap-4 my-10'>
         <Button
           variant='outline'
-          className={`text-white 
+          className={`text-white p-6
             ${isRecording ? 'bg-red-500' : 'bg-primary'} 
             ${!isWebcamOpen ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           onClick={isRecording ? stopSpeechToText : startSpeechToText}

@@ -3,10 +3,10 @@ import React from 'react'
 import { textToSpeech } from '@/utils/textToSpeech'
 const QuestionSection = ({ mockInterviewQuestions, activeQuestionIndex, setActiveQuestionIndex }) => {
     return mockInterviewQuestions && (
-        <div className='p-5 border rounded-lg my-10 flex flex-col justify-between'>
+        <div className='p-5 border rounded-lg my-2 lg:my-10 flex flex-col justify-between'>
             <div>
 
-                <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 '>
+                <div className='grid grid-cols-5 md:grid-cols-3 lg:grid-cols-4 gap-5 '>
                     {mockInterviewQuestions.map((question, index) => (
 
                         <h2 key={index} className={`text-xs md:text-sm text-center cursor-pointer p-2  border rounded-full ${activeQuestionIndex === index ? 'bg-primary text-white' : 'bg-secondary'}`} onClick={() => setActiveQuestionIndex(index)}>Question #{index + 1}</h2>
