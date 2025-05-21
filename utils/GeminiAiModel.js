@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY });
 
-async function GenerateQA(content) {
+async function GeminiPrompt(content) {
     const response = await ai.models.generateContent({
         model: "gemini-2.0-flash",
         contents: content,
@@ -12,4 +12,4 @@ async function GenerateQA(content) {
 }
 
 
-export default GenerateQA;
+export default GeminiPrompt;

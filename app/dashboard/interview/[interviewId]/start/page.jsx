@@ -40,7 +40,7 @@ const StartInterview = ({ params }) => {
                 {/* Questions  */}
                 <QuestionSection mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} setActiveQuestionIndex={setActiveQuestionIndex} />
                 {/* Webcam and microphone recording */}
-                <RecordAnswerSection />
+                <RecordAnswerSection mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} />
             </div>
         </div>
     )

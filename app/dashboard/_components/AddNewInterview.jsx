@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button, Input, Textarea } from '@/components/ui';
-import GenerateQA from "@/utils/GeminiAiModel";
+import GeminiPrompt from "@/utils/GeminiAiModel";
 import { LoaderCircle } from 'lucide-react';
 import { db } from "@/utils/db";
 import { MockInterview } from '@/utils/schema';
@@ -37,7 +37,7 @@ const AddNewInterview = () => {
         const InputPrompt = `Job position: ${jobRole}, Job Description: ${jobDescription} , Years of Experience:${jobExperience} , using this info give me ${process.env.NEXT_PUBLIC_QUESTION_COUNT} general not so hard interview questions with answers in JSON format give question answers as fields in JSON`
 
         try {
-            const result = await GenerateQA(InputPrompt)
+            const result = await GeminiPrompt(InputPrompt)
             if (result) {
                 setJsonResponse(result)
                 const dbRes = await db.insert(MockInterview)

@@ -1,17 +1,21 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Mic, MicOff, WebcamIcon } from 'lucide-react'
+import GeminiPrompt from '@/utils/GeminiAiModel'
+
+import { Mic, RotateCcw, WebcamIcon, CircleStop } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import useSpeechToText from 'react-hook-speech-to-text'
 
 import Webcam from 'react-webcam'
+import { toast } from 'sonner'
 
-const RecordAnswerSection = () => {
+const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) => {
   const [isWebcamOpen, setIsWebcamOpen] = useState(false)
   const [userAnswer, setUserAnswer] = useState('')
 
   const {
+    setResults,
     error,
     interimResult,
     isRecording,
@@ -20,8 +24,9 @@ const RecordAnswerSection = () => {
     stopSpeechToText,
   } = useSpeechToText({
     continuous: true,
-    useLegacyResults: false
+    useLegacyResults: false,
   });
+
 
   useEffect(() => {
     results.map((result) => {
@@ -29,9 +34,30 @@ const RecordAnswerSection = () => {
     })
   }, [results])
 
-  console.log(results)
+  const saveUserInput = async () => {
+    if (isRecording) {
+      stopSpeechToText();
+      if (userAnswer?.length < 10) {
+        
+        toast.error('No answer recorded, please try again')
+        return
+      }
 
+      const feedbackPrompt = `Based on the interview question : ${mockInterviewQuestions[activeQuestionIndex]?.question} and the user interview answer: ${userAnswer} give him a rating out of 5 and  a feedback for improvement if any (user cant code the answer its just texts) in just 3 to 5 lines there should be two fields rating and feedback in JSON format.`
 
+      const response = await GeminiPrompt(feedbackPrompt)
+      const parsedResponse = JSON.parse(response)
+      console.log(userAnswer, " ", parsedResponse)
+    } else {
+      startSpeechToText();
+    }
+  }
+
+  const handleReset = () => {
+    setResults([])
+    setUserAnswer('')
+    toast('Answer reseted')
+  }
 
 
   return (
@@ -41,7 +67,6 @@ const RecordAnswerSection = () => {
         <div className='flex items-center justify-center w-full h-full'>
           <Webcam
             mirrored={true}
-            audio={true}
             style={{
               width: '100%',
               height: '100%',
@@ -51,13 +76,7 @@ const RecordAnswerSection = () => {
             onUserMedia={() => setIsWebcamOpen(true)}
           />
         </div>
-        <div className='absolute bottom-4 right-4 z-20'>
-          {isRecording ? (
-            <Mic className='w-6 h-6 animate-pulse text-white' />
-          ) : (
-            <MicOff className='w-6 h-6 text-white' />
-          )}
-        </div>
+
       </div>
 
       <div className='flex items-center justify-center gap-4 my-10'>
@@ -66,11 +85,20 @@ const RecordAnswerSection = () => {
           className={`text-white p-6
             ${isRecording ? 'bg-red-500' : 'bg-primary'} 
             ${!isWebcamOpen ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-          onClick={isRecording ? stopSpeechToText : startSpeechToText}
+          onClick={saveUserInput}
           disabled={!isWebcamOpen}
         >
-          {isRecording ? 'Stop Recording' : 'Start Recording'}
+          {isRecording ? (
+            <div className='flex items-center gap-2 animate-pulse'>
+              <CircleStop className='w-8 h-8  ' /> Stop Recording
+            </div>
+          ) : (
+            <div className='flex items-center gap-2'>
+              <Mic className='w-8 h-8  ' /> Start Recording
+            </div>
+          )}
         </Button>
+        <Button variant='outline' disabled={userAnswer?.length <= 0} className={`bg-red-500 text-white p-6 ${userAnswer?.length <= 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} `} onClick={handleReset}><RotateCcw className='w-6 h-6 ' /> Reset Answer</Button>
       </div>
 
 
