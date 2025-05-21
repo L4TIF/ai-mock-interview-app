@@ -69,6 +69,7 @@ const AddNewInterview = () => {
 
 
     }
+    isLoading && <LoaderCircle className='text-primary' />
 
     return (
         <div>

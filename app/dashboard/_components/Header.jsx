@@ -11,7 +11,7 @@ const Header = () => {
 
 
             <Image src={'/logo.svg'} priority width={80} height={100} alt='logo' onClick={() => router.push('/dashboard')} />
-
+            {/* Desktop Navbar */}
             <ul className='hidden md:flex gap-6 '>
                 <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
                     ${path === '/dashboard' && 'text-primary font-bold'}

@@ -6,8 +6,8 @@ import { eq } from 'drizzle-orm';
 import { Lightbulb, WebcamIcon } from 'lucide-react';
 import React, { useEffect } from 'react'
 import Webcam from 'react-webcam';
+import Link from 'next/link';
 const Interview = ({ params }) => {
-
     const { interviewId } = React.use(params);
     const [interviewData, setInterviewData] = React.useState(null)
     const [isLoading, setIsLoading] = React.useState(false)
@@ -19,14 +19,16 @@ const Interview = ({ params }) => {
         setInterviewData((res[0]))
     }
     useEffect(() => {
+      
         setIsLoading(true)
         fetchInterview()
+       
         setIsLoading(false)
     }, [])
     if (isLoading) {
         return <div>Loading...</div>
     }
-    // continue with react webcam setup
+
     return (
         <>
             <div className='my-10 '>
@@ -45,35 +47,48 @@ const Interview = ({ params }) => {
                         </div>
                     </div>
 
-                    <div >
+                    <div className='flex flex-col items-center justify-between mb-5 h-[500px]'>
                         {isWebcamOpen ? (
+                            <div className='bg-secondary border rounded-lg w-full h-full'>
                             <Webcam
-                                className='rounded-lg my-5'
+                                className='rounded-lg  '
                                 mirrored={true}
                                 audio={true}
-                                width={450}
-                                height={450}
                                 onUserMediaError={() => {
                                     setIsWebcamOpen(false)
                                     console.log("Error")
+                                }}
+
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    zIndex: 10,
                                 }}
                                 onUserMedia={() => {
                                     setIsWebcamOpen(true)
                                     console.log("User Media")
                                 }}
                             />
+                            </div>
                         ) : (
-                            <>
-                                <WebcamIcon className='w-full h-72 my-5 p-20 border bg-secondary rounded-lg' />
-                                <Button variant='outline' className='w-full' onClick={() => setIsWebcamOpen(true)}>Open Webcam and microphone</Button>
+                            < >
+                                <WebcamIcon className='w-full h-full  p-20 border bg-secondary rounded-lg mb-5' />
+                                <Button variant='outline' className='w-full' onClick={() => setIsWebcamOpen(true)}>Open webcam and microphone</Button>
                             </>
                         )}
                     </div>
 
 
                 </div>
-                <div className='flex justify-end'>
-                    <Button  >Start Interview</Button>
+                <div className={`flex justify-end ${isWebcamOpen ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
+                    {isWebcamOpen ? (
+                        <Link href={`/dashboard/interview/${interviewId}/start`}>
+                            <Button>Start Interview</Button>
+                        </Link>
+                    ) : (
+                        <Button className='w-fit' disabled>Start Interview</Button>
+                    )}
                 </div>
             </div>
         </>
