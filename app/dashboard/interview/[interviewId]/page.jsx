@@ -8,7 +8,6 @@ import React, { useEffect } from 'react'
 import Webcam from 'react-webcam';
 import Link from 'next/link';
 const Interview = ({ params }) => {
-
     const { interviewId } = React.use(params);
     const [interviewData, setInterviewData] = React.useState(null)
     const [isLoading, setIsLoading] = React.useState(false)
@@ -20,8 +19,10 @@ const Interview = ({ params }) => {
         setInterviewData((res[0]))
     }
     useEffect(() => {
+      
         setIsLoading(true)
         fetchInterview()
+       
         setIsLoading(false)
     }, [])
     if (isLoading) {
@@ -48,6 +49,7 @@ const Interview = ({ params }) => {
 
                     <div className='flex flex-col items-center justify-between mb-5 h-[500px]'>
                         {isWebcamOpen ? (
+                            <div className='bg-secondary border rounded-lg w-full h-full'>
                             <Webcam
                                 className='rounded-lg  '
                                 mirrored={true}
@@ -56,6 +58,7 @@ const Interview = ({ params }) => {
                                     setIsWebcamOpen(false)
                                     console.log("Error")
                                 }}
+
                                 style={{
                                     width: '100%',
                                     height: '100%',
@@ -67,6 +70,7 @@ const Interview = ({ params }) => {
                                     console.log("User Media")
                                 }}
                             />
+                            </div>
                         ) : (
                             < >
                                 <WebcamIcon className='w-full h-full  p-20 border bg-secondary rounded-lg mb-5' />

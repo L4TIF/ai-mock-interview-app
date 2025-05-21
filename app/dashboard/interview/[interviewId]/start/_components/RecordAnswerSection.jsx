@@ -53,9 +53,9 @@ const RecordAnswerSection = () => {
         </div>
         <div className='absolute bottom-4 right-4 z-20'>
           {isRecording ? (
-            <Mic className='w-8 h-8 animate-pulse text-white' />
+            <Mic className='w-6 h-6 animate-pulse text-white' />
           ) : (
-            <MicOff className='w-8 h-8 text-white' />
+            <MicOff className='w-6 h-6 text-white' />
           )}
         </div>
       </div>
