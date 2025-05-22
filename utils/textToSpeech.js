@@ -1,3 +1,5 @@
+import { toast } from 'sonner'
+
 export const textToSpeech = (text) => {
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text)
@@ -6,9 +8,11 @@ export const textToSpeech = (text) => {
         utterance.pitch = 1
         utterance.volume = 1
         utterance.voice = speechSynthesis.getVoices()[1]
+
         speechSynthesis.speak(utterance)
+        return utterance
     }
     else {
-        alert('Speech not supported in your browser')
+        toast.error('Speech not supported in your browser')
     }
 }

@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button'
 import { db } from '@/utils/db'
 import GeminiPrompt from '@/utils/GeminiAiModel'
 import { UserAnswer } from '@/utils/schema'
-import { Mic, WebcamIcon, CircleStop } from 'lucide-react'
+import { textToSpeech } from '@/utils/textToSpeech'
+import { Mic, WebcamIcon, CircleStop, Play, Pause } from 'lucide-react'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
@@ -14,7 +15,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
 
   const [isWebcamOpen, setIsWebcamOpen] = useState(false)
   const [userAnswer, setUserAnswer] = useState('')
-
+  const [isPlaying, setIsPlaying] = useState(false)
   const {
     transcript,
     listening,
@@ -28,7 +29,20 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
       toast.error('Webcam is not open')
       return
     }
-  }, [transcript])
+  }, [transcript, activeQuestionIndex])
+
+
+  const playUserAnswer = () => {
+    if (userAnswer?.length > 1) {
+      setIsPlaying(true)
+      const utterance = textToSpeech(userAnswer)
+      utterance.onend = () => {
+        setIsPlaying(false)
+      }
+    } else {
+      toast.error('No answer recorded, please try again')
+    }
+  }
 
   const saveUserInput = async () => {
     if (listening) {
@@ -38,6 +52,15 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
         return
       }
 
+    } else {
+      resetTranscript()
+      setUserAnswer('')
+      SpeechRecognition.startListening({ continuous: true, language: 'en-IN' })
+    }
+  }
+
+  const submitAnswer = async () => {
+    if (userAnswer?.length > 10) {
       const feedbackPrompt = `(you are a interviewer and user is the candidate) 
                              (the answer should not be just the repeat of the question) 
                              (as the user recording is trascribed so there can be wrong words but the main idea should be there )
@@ -65,10 +88,11 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
       })
 
       console.log(dbRes, " ", parsedResponse)
-
+      toast.success('Answer submitted successfully')
+      setUserAnswer('')
       resetTranscript()
     } else {
-      SpeechRecognition.startListening({ continuous: true, language: 'en-IN' })
+      toast.error('No answer recorded, please try again')
     }
   }
 
@@ -99,7 +123,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
       <div className='flex items-center justify-center gap-4 my-10'>
         <Button
           variant='outline'
-          className={`text-white p-6
+          className={`text-white p-6 
             ${listening ? 'bg-red-500' : 'bg-primary'} 
             ${!isWebcamOpen ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           onClick={saveUserInput}
@@ -115,6 +139,14 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
             </div>
           )}
         </Button>
+        <Button variant='outline' className='p-6' onClick={playUserAnswer} disabled={(userAnswer?.length < 10)}>
+          {isPlaying ? (
+            <Pause size={40} className='animate-pulse' />
+          ) : (
+            <Play size={40} />
+          )}
+        </Button>
+        <Button variant='outline' className='p-6 bg-primary text-white' onClick={submitAnswer} disabled={(userAnswer?.length < 10) || listening}>Submit</Button>
       </div>
 
     </div>
