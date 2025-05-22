@@ -36,7 +36,15 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
         return
       }
 
-      const feedbackPrompt = `(you are a interviewer and user is the candidate) (the answer should not be just the repeat of the question) (as the user recording is trascribed so there can be wrong words but the main idea should be there ) Based on the interview question : ${mockInterviewQuestions[activeQuestionIndex]?.question} and the user interview answer: ${userAnswer} give him a rating out of 5 and  a feedback for improvement if any (user cant code the answer its just texts) in just 3 to 5 lines there should be two fields rating and feedback in JSON format.`
+      const feedbackPrompt = `(you are a interviewer and user is the candidate) 
+                             (the answer should not be just the repeat of the question) 
+                             (as the user recording is trascribed so there can be wrong words but the main idea should be there )
+                              Based on the interview question : ${mockInterviewQuestions[activeQuestionIndex]?.question} 
+                             and the user interview answer: ${userAnswer}
+                            give him a rating out of 5 and  a feedback for improvement if any 
+                            (user cant code the answer its just texts) 
+                            in just 3 to 5 lines there should be two fields rating and feedback
+                            the response should be in JSON format.`
 
       const response = await GeminiPrompt(feedbackPrompt)
       const parsedResponse = { questionIndex: activeQuestionIndex, mockInterviewQuestion: mockInterviewQuestions[activeQuestionIndex], userAnswer: userAnswer, response: JSON.parse(response) }
