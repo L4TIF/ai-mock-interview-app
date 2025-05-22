@@ -5,7 +5,7 @@ import GeminiPrompt from '@/utils/GeminiAiModel'
 
 import { Mic, RotateCcw, WebcamIcon, CircleStop } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import useSpeechToText from 'react-hook-speech-to-text'
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 
 import Webcam from 'react-webcam'
 import { toast } from 'sonner'
@@ -15,54 +15,44 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
   const [userAnswer, setUserAnswer] = useState('')
 
   const {
-    setResults,
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText,
-  } = useSpeechToText({
-    continuous: true,
-    useLegacyResults: false,
-  });
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
 
 
   useEffect(() => {
-    results.map((result) => {
-      setUserAnswer(prev => prev + result?.transcript)
-    })
-  }, [results])
+    setUserAnswer(transcript)
+  }, [transcript])
 
   const saveUserInput = async () => {
-    if (isRecording) {
-      stopSpeechToText();
+    if (listening) {
+      SpeechRecognition.stopListening()
+
       if (userAnswer?.length < 10) {
-        
+
         toast.error('No answer recorded, please try again')
         return
       }
 
-      const feedbackPrompt = `Based on the interview question : ${mockInterviewQuestions[activeQuestionIndex]?.question} and the user interview answer: ${userAnswer} give him a rating out of 5 and  a feedback for improvement if any (user cant code the answer its just texts) in just 3 to 5 lines there should be two fields rating and feedback in JSON format.`
+      const feedbackPrompt = `(you are a interviewer and user is the candidate) (the answer should not be just the repeat of the question) (as the user recording is trascribed so there can be wrong words but the main idea should be there ) Based on the interview question : ${mockInterviewQuestions[activeQuestionIndex]?.question} and the user interview answer: ${userAnswer} give him a rating out of 5 and  a feedback for improvement if any (user cant code the answer its just texts) in just 3 to 5 lines there should be two fields rating and feedback in JSON format.`
 
       const response = await GeminiPrompt(feedbackPrompt)
-      const parsedResponse = JSON.parse(response)
+      const parsedResponse = { questionIndex: activeQuestionIndex, mockInterviewQuestion: mockInterviewQuestions[activeQuestionIndex], userAnswer: userAnswer, response: JSON.parse(response) }
       console.log(userAnswer, " ", parsedResponse)
+      resetTranscript()
     } else {
-      startSpeechToText();
+      SpeechRecognition.startListening({ continuous: true, language: 'en-IN' })
     }
   }
 
-  const handleReset = () => {
-    setResults([])
-    setUserAnswer('')
-    toast('Answer reseted')
+  if (!browserSupportsSpeechRecognition) {
+    return toast.error('Browser does not support speech recognition')
   }
-
-
   return (
     <div className='flex items-center justify-center flex-col'>
-      <div className='flex flex-col bg-black items-center justify-center rounded-lg p-5 mt-5 lg:mt-20 relative h-[350px] lg:h-[500px] w-full'>
+      <div className='flex flex-col bg-black items-center justify-center rounded-lg p-5 mt-5 lg:mt-10 relative h-[350px] lg:h-[500px] w-full'>
         <WebcamIcon className='absolute text-white' width={200} height={200} />
         <div className='flex items-center justify-center w-full h-full'>
           <Webcam
@@ -83,12 +73,12 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
         <Button
           variant='outline'
           className={`text-white p-6
-            ${isRecording ? 'bg-red-500' : 'bg-primary'} 
+            ${listening ? 'bg-red-500' : 'bg-primary'} 
             ${!isWebcamOpen ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           onClick={saveUserInput}
           disabled={!isWebcamOpen}
         >
-          {isRecording ? (
+          {listening ? (
             <div className='flex items-center gap-2 animate-pulse'>
               <CircleStop className='w-8 h-8  ' /> Stop Recording
             </div>
@@ -98,7 +88,6 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
             </div>
           )}
         </Button>
-        <Button variant='outline' disabled={userAnswer?.length <= 0} className={`bg-red-500 text-white p-6 ${userAnswer?.length <= 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} `} onClick={handleReset}><RotateCcw className='w-6 h-6 ' /> Reset Answer</Button>
       </div>
 
 

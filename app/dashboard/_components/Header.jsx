@@ -7,7 +7,7 @@ const Header = () => {
     const path = usePathname()
     const router = useRouter()
     return (
-        <div className='flex bg-secondary shadow-sm items-center justify-between p-4 '>
+        <div className='flex bg-secondary shadow-sm items-center justify-between p-4 sticky top-0 z-50'>
 
 
             <Image src={'/logo.svg'} priority width={80} height={100} alt='logo' onClick={() => router.push('/dashboard')} />
