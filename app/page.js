@@ -1,16 +1,14 @@
-
+'use client'
 import { Button } from '@/components/ui/button'
-
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
   return (
     <>
-      <h1 >hello world!</h1>
-      <h2 >this is a default landing page</h2>
+      <h1 >Dev is working on the landing page</h1>
       <h3 >goto /dashboard to see the dashboard</h3>
-
-      <Button variant={'outline'}>i am a shadcn button, clicking me will do nothing</Button>
-
+      <Button className='m-10 cursor-pointer' onClick={() => router.push('/dashboard')}>Go to the dashboard</Button>
     </>
   );
 }

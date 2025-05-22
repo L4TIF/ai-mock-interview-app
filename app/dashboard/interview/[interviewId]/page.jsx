@@ -18,11 +18,9 @@ const Interview = ({ params }) => {
         const res = await db.select().from(MockInterview).where(eq(MockInterview.mockId, interviewId))
         setInterviewData((res[0]))
     }
-    useEffect(() => {
-      
+    useEffect(() => {      
         setIsLoading(true)
         fetchInterview()
-       
         setIsLoading(false)
     }, [])
     if (isLoading) {
@@ -67,7 +65,6 @@ const Interview = ({ params }) => {
                                 }}
                                 onUserMedia={() => {
                                     setIsWebcamOpen(true)
-                                    console.log("User Media")
                                 }}
                             />
                             </div>

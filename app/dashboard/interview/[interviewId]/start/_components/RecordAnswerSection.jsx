@@ -1,16 +1,17 @@
 'use client'
-
 import { Button } from '@/components/ui/button'
+import { db } from '@/utils/db'
 import GeminiPrompt from '@/utils/GeminiAiModel'
-
-import { Mic, RotateCcw, WebcamIcon, CircleStop } from 'lucide-react'
+import { UserAnswer } from '@/utils/schema'
+import { Mic, WebcamIcon, CircleStop } from 'lucide-react'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
-
 import Webcam from 'react-webcam'
 import { toast } from 'sonner'
 
-const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) => {
+const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQuestionIndex }) => {
+
   const [isWebcamOpen, setIsWebcamOpen] = useState(false)
   const [userAnswer, setUserAnswer] = useState('')
 
@@ -21,17 +22,18 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
     browserSupportsSpeechRecognition
   } = useSpeechRecognition();
 
-
   useEffect(() => {
     setUserAnswer(transcript)
+    if (!isWebcamOpen) {
+      toast.error('Webcam is not open')
+      return
+    }
   }, [transcript])
 
   const saveUserInput = async () => {
     if (listening) {
       SpeechRecognition.stopListening()
-
       if (userAnswer?.length < 10) {
-
         toast.error('No answer recorded, please try again')
         return
       }
@@ -49,6 +51,21 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
       const response = await GeminiPrompt(feedbackPrompt)
       const parsedResponse = { questionIndex: activeQuestionIndex, mockInterviewQuestion: mockInterviewQuestions[activeQuestionIndex], userAnswer: userAnswer, response: JSON.parse(response) }
       console.log(userAnswer, " ", parsedResponse)
+      console.log(mockInterviewQuestions[activeQuestionIndex])
+
+      const dbRes = await db.insert(UserAnswer).values({
+        mockIdRef: interviewData?.mockId,
+        question: mockInterviewQuestions[activeQuestionIndex]?.question,
+        correctAnswer: mockInterviewQuestions[activeQuestionIndex]?.answer,
+        userAnswer: userAnswer,
+        feedback: parsedResponse.response.feedback,
+        rating: parsedResponse.response.rating,
+        createdBy: interviewData?.createdBy,
+        createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
+      })
+
+      console.log(dbRes, " ", parsedResponse)
+
       resetTranscript()
     } else {
       SpeechRecognition.startListening({ continuous: true, language: 'en-IN' })
@@ -58,9 +75,11 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
   if (!browserSupportsSpeechRecognition) {
     return toast.error('Browser does not support speech recognition')
   }
+
   return (
     <div className='flex items-center justify-center flex-col'>
       <div className='flex flex-col bg-black items-center justify-center rounded-lg p-5 mt-5 lg:mt-10 relative h-[350px] lg:h-[500px] w-full'>
+
         <WebcamIcon className='absolute text-white' width={200} height={200} />
         <div className='flex items-center justify-center w-full h-full'>
           <Webcam
@@ -97,10 +116,6 @@ const RecordAnswerSection = ({ mockInterviewQuestions, activeQuestionIndex }) =>
           )}
         </Button>
       </div>
-
-
-
-
 
     </div>
   )
