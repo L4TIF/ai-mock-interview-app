@@ -17,15 +17,17 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
   const [userAnswer, setUserAnswer] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
   const {
-    transcript,
+    finalTranscript,
+    isMicrophoneAvailable,
     listening,
     resetTranscript,
-    browserSupportsSpeechRecognition
+    browserSupportsSpeechRecognition,
+    browserSupportsContinuousListening,
   } = useSpeechRecognition();
 
   useEffect(() => {
-    setUserAnswer(transcript)
-  }, [transcript, activeQuestionIndex])
+    setUserAnswer(finalTranscript)
+  }, [finalTranscript, activeQuestionIndex])
 
 
   const playUserAnswer = () => {
@@ -47,11 +49,33 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
         toast.error('No answer recorded, please try again')
         return
       }
-
     } else {
+      // Cancel any ongoing speech synthesis before starting recording
+      if ('speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+
       resetTranscript()
       setUserAnswer('')
-      SpeechRecognition.startListening({ continuous: true, language: 'en-IN' })
+      if (browserSupportsContinuousListening && browserSupportsSpeechRecognition && isMicrophoneAvailable) {
+        try {
+          await SpeechRecognition.startListening({
+            continuous: true,
+            language: 'en-IN',
+            // Add audio constraints to prefer the default microphone
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            }
+          });
+        } catch (error) {
+          toast.error('Error starting speech recognition');
+          console.error('Speech recognition error:', error);
+        }
+      } else {
+        toast.error('Browser does not support continuous listening or speech recognition')
+      }
     }
   }
 
@@ -69,8 +93,6 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
 
       const response = await GeminiPrompt(feedbackPrompt)
       const parsedResponse = { questionIndex: activeQuestionIndex, mockInterviewQuestion: mockInterviewQuestions[activeQuestionIndex], userAnswer: userAnswer, response: JSON.parse(response) }
-      console.log(userAnswer, " ", parsedResponse)
-      console.log(mockInterviewQuestions[activeQuestionIndex])
 
       const dbRes = await db.insert(UserAnswer).values({
         mockIdRef: interviewData?.mockId,
@@ -82,18 +104,12 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
         createdBy: interviewData?.createdBy,
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
       })
-
-      console.log(dbRes, " ", parsedResponse)
       toast.success('Answer submitted successfully')
       setUserAnswer('')
       resetTranscript()
     } else {
       toast.error('No answer recorded, please try again')
     }
-  }
-
-  if (!browserSupportsSpeechRecognition) {
-    return toast.error('Browser does not support speech recognition')
   }
 
   return (
