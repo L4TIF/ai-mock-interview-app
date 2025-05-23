@@ -25,10 +25,6 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
 
   useEffect(() => {
     setUserAnswer(transcript)
-    if (!isWebcamOpen) {
-      toast.error('Webcam is not open')
-      return
-    }
   }, [transcript, activeQuestionIndex])
 
 

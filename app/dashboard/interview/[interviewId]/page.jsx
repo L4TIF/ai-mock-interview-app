@@ -7,6 +7,7 @@ import { Lightbulb, WebcamIcon } from 'lucide-react';
 import React, { useEffect } from 'react'
 import Webcam from 'react-webcam';
 import Link from 'next/link';
+import { toast } from 'sonner';
 const Interview = ({ params }) => {
     const { interviewId } = React.use(params);
     const [interviewData, setInterviewData] = React.useState(null)
@@ -55,6 +56,7 @@ const Interview = ({ params }) => {
                                 onUserMediaError={() => {
                                     setIsWebcamOpen(false)
                                     console.log("Error")
+                                    toast.error('Error opening webcam and microphone')  
                                 }}
 
                                 style={{
