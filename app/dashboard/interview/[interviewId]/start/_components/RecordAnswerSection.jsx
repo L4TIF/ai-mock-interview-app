@@ -16,6 +16,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
   const [isWebcamOpen, setIsWebcamOpen] = useState(false)
   const [userAnswer, setUserAnswer] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const {
     finalTranscript,
     isMicrophoneAvailable,
@@ -46,6 +47,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
     if (listening) {
       SpeechRecognition.stopListening()
       if (userAnswer?.length < 10) {
+        setIsSubmitting(false)
         toast.error('No answer recorded, please try again')
         return
       }
@@ -74,12 +76,14 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
           console.error('Speech recognition error:', error);
         }
       } else {
+        // TODO: fix browser not supporting continuous listening on mobile devices
         toast.error('Browser does not support continuous listening or speech recognition')
       }
     }
   }
 
   const submitAnswer = async () => {
+    setIsSubmitting(true)
     if (userAnswer?.length > 10) {
       const feedbackPrompt = `(you are a interviewer and user is the candidate) 
                              (the answer should not be just the repeat of the question) 
@@ -104,11 +108,14 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
         createdBy: interviewData?.createdBy,
         createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
       })
-      toast.success('Answer submitted successfully')
-      setUserAnswer('')
-      resetTranscript()
-    } else {
-      toast.error('No answer recorded, please try again')
+      if (dbRes) {
+        toast.success('Answer submitted successfully')
+        setUserAnswer('')
+        resetTranscript()
+      } else {
+        toast.error('No answer recorded, please try again')
+      }
+      setIsSubmitting(false)
     }
   }
 
@@ -135,11 +142,11 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
       <div className='flex items-center justify-center gap-4 my-10'>
         <Button
           variant='outline'
-          className={`text-white p-6 
+          className={`text-white p-6 cursor-pointer disabled:cursor-not-allowed
             ${listening ? 'bg-red-500' : 'bg-primary'} 
             ${!isWebcamOpen ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           onClick={saveUserInput}
-          disabled={!isWebcamOpen}
+          disabled={!isWebcamOpen || isSubmitting}
         >
           {listening ? (
             <div className='flex items-center gap-2 animate-pulse'>
@@ -151,14 +158,14 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
             </div>
           )}
         </Button>
-        <Button variant='outline' className='p-6' onClick={playUserAnswer} disabled={(userAnswer?.length < 10)}>
+        <Button variant='outline' className='p-6 cursor-pointer disabled:cursor-not-allowed' onClick={playUserAnswer} disabled={(userAnswer?.length < 10)}>
           {isPlaying ? (
             <Pause size={40} className='animate-pulse' />
           ) : (
             <Play size={40} />
           )}
         </Button>
-        <Button variant='outline' className='p-6 bg-primary text-white' onClick={submitAnswer} disabled={(userAnswer?.length < 10) || listening}>Submit</Button>
+        <Button variant='outline' className='p-6 bg-primary text-white cursor-pointer disabled:cursor-not-allowed' onClick={submitAnswer} disabled={(userAnswer?.length < 10) || listening}>Submit</Button>
       </div>
 
     </div>
