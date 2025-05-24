@@ -1,8 +1,9 @@
+'use client'
 import { Lightbulb, Volume2 } from 'lucide-react'
 import React from 'react'
 import { textToSpeech } from '@/utils/textToSpeech'
 
-const QuestionSection = ({ mockInterviewQuestions, activeQuestionIndex, setActiveQuestionIndex }) => {
+const QuestionSection =  ({ mockInterviewQuestions, activeQuestionIndex, setActiveQuestionIndex }) => {
     return mockInterviewQuestions && (
         <div className='p-5 border rounded-lg my-2 lg:my-10 flex flex-col justify-between'>
             <div>

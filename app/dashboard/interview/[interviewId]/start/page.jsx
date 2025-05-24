@@ -1,10 +1,13 @@
 'use client'
+
 import { db } from '@/utils/db'
 import { MockInterview } from '@/utils/schema'
 import { eq } from 'drizzle-orm'
 import React, { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import QuestionSection from './_components/QuestionSection'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
 
 // Dynamically import RecordAnswerSection with no SSR
 const RecordAnswerSection = dynamic(
@@ -18,7 +21,7 @@ const StartInterview = ({ params }) => {
     const [interviewData, setInterviewData] = React.useState(null)
     const [mockInterviewQuestions, setMockInterviewQuestions] = React.useState(null)
     const [activeQuestionIndex, setActiveQuestionIndex] = React.useState(0)
-
+    const router = useRouter()
     const fetchInterview = async () => {
         const res = await db.select().from(MockInterview).where(eq(MockInterview.mockId, interviewId))
         setInterviewData((res[0]));
@@ -37,11 +40,30 @@ const StartInterview = ({ params }) => {
     }
     return (
         <div>
-            <div className='flex flex-col-reverse lg:grid grid-cols-1 md:grid-cols-2 lg:gap-10'>
+            <div className='flex flex-col-reverse lg:grid lg:grid-cols-2 lg:gap-10'>
                 {/* Questions  */}
                 <QuestionSection mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} setActiveQuestionIndex={setActiveQuestionIndex} />
                 {/* Webcam and microphone recording */}
                 <RecordAnswerSection interviewData={interviewData} mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} />
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className=' flex items-center justify-end gap-4'>
+                {activeQuestionIndex > 0 && (
+                    <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}>
+                        Previous Question
+                    </Button>
+                )}
+                {activeQuestionIndex < mockInterviewQuestions?.length - 1 && (
+                    <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex + 1)}>
+                        Next Question
+                    </Button>
+                )}
+                {activeQuestionIndex === mockInterviewQuestions?.length - 1 && (
+                    <Button variant='destructive' onClick={() => router.push(`/dashboard/interview/${interviewId}/feedback`)}>
+                        End Interview
+                    </Button>
+                )}
             </div>
         </div>
     )
