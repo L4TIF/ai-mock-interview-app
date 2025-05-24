@@ -16,12 +16,23 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "AI Mock Interview",
   description: "Mock Interview which is conducted by ai",
+  icons: {
+    icon: [
+      {
+        url: '/logo.svg',
+        type: 'image/svg+xml',
+        sizes: 'any',
+        as: 'image',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
+
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >

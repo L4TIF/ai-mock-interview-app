@@ -8,12 +8,15 @@ import dynamic from 'next/dynamic'
 import QuestionSection from './_components/QuestionSection'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import ClientOnly from './_components/clientOnlyPage'
 
 // Dynamically import RecordAnswerSection with no SSR
 const RecordAnswerSection = dynamic(
     () => import('./_components/RecordAnswerSection'),
     { ssr: false }
 )
+
+
 
 const StartInterview = ({ params }) => {
     const { interviewId } = React.use(params)
@@ -22,6 +25,7 @@ const StartInterview = ({ params }) => {
     const [mockInterviewQuestions, setMockInterviewQuestions] = React.useState(null)
     const [activeQuestionIndex, setActiveQuestionIndex] = React.useState(0)
     const router = useRouter()
+
     const fetchInterview = async () => {
         const res = await db.select().from(MockInterview).where(eq(MockInterview.mockId, interviewId))
         setInterviewData((res[0]));
@@ -38,17 +42,21 @@ const StartInterview = ({ params }) => {
     if (isLoading) {
         return <div>Loading...</div>
     }
+
     return (
         <div>
             <div className='flex flex-col-reverse lg:grid lg:grid-cols-2 lg:gap-10'>
                 {/* Questions  */}
                 <QuestionSection mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} setActiveQuestionIndex={setActiveQuestionIndex} />
+
                 {/* Webcam and microphone recording */}
-                <RecordAnswerSection interviewData={interviewData} mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} />
+                <ClientOnly>
+                    <RecordAnswerSection interviewData={interviewData} mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} />
+                </ClientOnly>
             </div>
 
             {/* Navigation Buttons */}
-            <div className=' flex items-center justify-end gap-4'>
+            <div className='flex items-center justify-end gap-4'>
                 {activeQuestionIndex > 0 && (
                     <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}>
                         Previous Question

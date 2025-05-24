@@ -9,7 +9,7 @@ const Header = () => {
     return (
         <div className='flex bg-secondary shadow-sm items-center justify-between p-4 sticky top-0 z-50'>
 
-            <Image src={'/logo.svg'} priority width={80} height={100} alt='logo' onClick={() => router.push('/dashboard')} />
+            <Image src={'/logo.svg'} style={{ height: 'auto', width: 'auto' }} priority width={80} height={100} alt='logo' onClick={() => router.push('/dashboard')} />
             {/* Desktop Navbar */}
             <ul className='hidden md:flex gap-6 '>
                 <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
