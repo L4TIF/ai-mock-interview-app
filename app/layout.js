@@ -23,8 +23,8 @@ export const metadata = {
         type: 'image/svg+xml',
         sizes: 'any',
         as: 'image',
-      },
-    ],
+      }
+    ]
   },
 };
 

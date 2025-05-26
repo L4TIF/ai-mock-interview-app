@@ -1,7 +1,7 @@
 'use client'
 
 import { db } from '@/utils/db'
-import { MockInterview } from '@/utils/schema'
+import { MockInterview, UserAnswer } from '@/utils/schema'
 import { eq } from 'drizzle-orm'
 import React, { useEffect } from 'react'
 import dynamic from 'next/dynamic'
@@ -9,6 +9,7 @@ import QuestionSection from './_components/QuestionSection'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import ClientOnly from './_components/clientOnlyPage'
+
 
 // Dynamically import RecordAnswerSection with no SSR
 const RecordAnswerSection = dynamic(
@@ -24,6 +25,20 @@ const StartInterview = ({ params }) => {
     const [interviewData, setInterviewData] = React.useState(null)
     const [mockInterviewQuestions, setMockInterviewQuestions] = React.useState(null)
     const [activeQuestionIndex, setActiveQuestionIndex] = React.useState(0)
+    const [isAnswersEmpty, setIsAnswersEmpty] = React.useState(false)
+
+
+    const checkIfAnswersEmpty = async () => {
+        const res = await db.select().from(UserAnswer).where(eq(UserAnswer.mockIdRef, interviewId))
+        if (res.length !== 5) {
+            setIsAnswersEmpty(true)
+        } else {
+            setIsAnswersEmpty(false)
+        }
+    }
+
+
+
     const router = useRouter()
 
     const fetchInterview = async () => {
@@ -32,6 +47,10 @@ const StartInterview = ({ params }) => {
         const jsonMockInterviewQuestions = JSON.parse(res[0].jsonMockResp)
         setMockInterviewQuestions(jsonMockInterviewQuestions)
     }
+
+    useEffect(() => {
+        checkIfAnswersEmpty()
+    }, [activeQuestionIndex])
 
     useEffect(() => {
         setIsLoading(true)
@@ -68,7 +87,7 @@ const StartInterview = ({ params }) => {
                     </Button>
                 )}
                 {activeQuestionIndex === mockInterviewQuestions?.length - 1 && (
-                    <Button variant='destructive' onClick={() => router.push(`/dashboard/interview/${interviewId}/feedback`)}>
+                    <Button variant='destructive' className={isAnswersEmpty ? 'cursor-not-allowed' : 'cursor-pointer'}  title={isAnswersEmpty ? 'Please answer all questions' : 'End Interview'} disabled={isAnswersEmpty} onClick={() => router.push(`/dashboard/interview/${interviewId}/feedback`)}>
                         End Interview
                     </Button>
                 )}

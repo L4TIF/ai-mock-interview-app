@@ -4,6 +4,7 @@ import { db } from '@/utils/db'
 import GeminiPrompt from '@/utils/GeminiAiModel'
 import { UserAnswer } from '@/utils/schema'
 import { textToSpeech } from '@/utils/textToSpeech'
+import { eq } from 'drizzle-orm'
 import { Mic, WebcamIcon, CircleStop, Play, Pause } from 'lucide-react'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -98,17 +99,9 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
       const response = await GeminiPrompt(feedbackPrompt)
       const parsedResponse = { questionIndex: activeQuestionIndex, mockInterviewQuestion: mockInterviewQuestions[activeQuestionIndex], userAnswer: userAnswer, response: JSON.parse(response) }
 
-      const dbRes = await db.insert(UserAnswer).values({
-        mockIdRef: interviewData?.mockId,
-        question: mockInterviewQuestions[activeQuestionIndex]?.question,
-        correctAnswer: mockInterviewQuestions[activeQuestionIndex]?.answer,
-        userAnswer: userAnswer,
-        feedback: parsedResponse.response.feedback,
-        rating: parsedResponse.response.rating,
-        createdBy: interviewData?.createdBy,
-        createdAt: moment().format('YYYY-MM-DD HH:mm:ss')
-      })
+      const dbRes = await insertUpdateUserAnswer(parsedResponse)
       if (dbRes) {
+        console.log(dbRes)
         toast.success('Answer submitted successfully')
         setUserAnswer('')
         resetTranscript()
@@ -118,6 +111,66 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
       setIsSubmitting(false)
     }
   }
+
+
+  const insertUpdateUserAnswer = async (parsedResponse) => {
+    // Check if answer exists for this specific question in this mock interview
+    const checkIfQuestionExists = await db.select()
+      .from(UserAnswer)
+      .where(eq(UserAnswer.mockIdRef, interviewData?.mockId))
+      .where(eq(UserAnswer.questionId, parsedResponse.questionIndex.toString()));
+
+    if (checkIfQuestionExists.length > 0) {
+      // Update existing answer
+      const dbRes = await db.update(UserAnswer)
+        .set({
+          userAnswer: userAnswer,
+          feedback: parsedResponse.response.feedback,
+          rating: parsedResponse.response.rating,
+          updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+        })
+        .where(eq(UserAnswer.mockIdRef, interviewData?.mockId))
+        .where(eq(UserAnswer.questionId, parsedResponse.questionIndex.toString()));
+      return dbRes;
+    } else {
+      // Insert new answer
+      const dbRes = await db.insert(UserAnswer)
+        .values({
+          mockIdRef: interviewData?.mockId,
+          questionId: parsedResponse.questionIndex.toString(), // Use question index as ID
+          question: mockInterviewQuestions[activeQuestionIndex]?.question,
+          correctAnswer: mockInterviewQuestions[activeQuestionIndex]?.answer,
+          userAnswer: userAnswer,
+          feedback: parsedResponse.response.feedback,
+          rating: parsedResponse.response.rating,
+          createdBy: interviewData?.createdBy,
+          createdAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+          updatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+        });
+      return dbRes;
+    }
+  }
+
+  // Add function to check existing answer
+  const checkExistingAnswer = async () => {
+    const existingAnswer = await db.select()
+      .from(UserAnswer)
+      .where(eq(UserAnswer.mockIdRef, interviewData?.mockId))
+      .where(eq(UserAnswer.questionId, activeQuestionIndex.toString()));
+
+    if (existingAnswer.length > 0) {
+      setUserAnswer(existingAnswer[0].userAnswer);
+      return existingAnswer[0];
+    }
+    return null;
+  };
+
+  // Add useEffect to check for existing answer when question changes
+  useEffect(() => {
+    if (interviewData?.mockId) {
+      checkExistingAnswer();
+    }
+  }, [activeQuestionIndex, interviewData?.mockId]);
 
   return (
     <div className='flex items-center justify-center flex-col'>
@@ -158,7 +211,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
             </div>
           )}
         </Button>
-        <Button variant='outline' className='p-6 cursor-pointer disabled:cursor-not-allowed' onClick={playUserAnswer} disabled={(userAnswer?.length < 10)}>
+        <Button variant='outline' className='p-6 cursor-pointer disabled:cursor-not-allowed' onClick={playUserAnswer} disabled={(userAnswer?.length < 10)} title='Play your answer'>
           {isPlaying ? (
             <Pause size={40} className='animate-pulse' />
           ) : (
