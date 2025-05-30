@@ -4,7 +4,7 @@ import { db } from '@/utils/db'
 import GeminiPrompt from '@/utils/GeminiAiModel'
 import { UserAnswer } from '@/utils/schema'
 import { textToSpeech } from '@/utils/textToSpeech'
-import { eq } from 'drizzle-orm'
+import { eq, and, gte, lte } from 'drizzle-orm'
 import { Mic, WebcamIcon, CircleStop, Play, Pause } from 'lucide-react'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -18,6 +18,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
   const [userAnswer, setUserAnswer] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const {
     finalTranscript,
     isMicrophoneAvailable,
@@ -85,7 +86,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
 
   const submitAnswer = async () => {
     setIsSubmitting(true)
-    if (userAnswer?.length > 10) {
+    if (userAnswer?.length > 5) {
       const feedbackPrompt = `(you are a interviewer and user is the candidate) 
                              (the answer should not be just the repeat of the question) 
                              (as the user recording is trascribed so there can be wrong words but the main idea should be there )
@@ -105,6 +106,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
         toast.success('Answer submitted successfully')
         setUserAnswer('')
         resetTranscript()
+        setIsSubmitted(true)
       } else {
         toast.error('No answer recorded, please try again')
       }
@@ -115,10 +117,11 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
 
   const insertUpdateUserAnswer = async (parsedResponse) => {
     // Check if answer exists for this specific question in this mock interview
-    const checkIfQuestionExists = await db.select()
-      .from(UserAnswer)
-      .where(eq(UserAnswer.mockIdRef, interviewData?.mockId))
-      .where(eq(UserAnswer.questionId, parsedResponse.questionIndex.toString()));
+    const checkIfQuestionExists = await db.select().from(UserAnswer).where(and(
+      eq(UserAnswer.mockIdRef, interviewData?.mockId),
+      gte(UserAnswer.questionId, activeQuestionIndex.toString()),
+      lte(UserAnswer.questionId, activeQuestionIndex.toString())
+    ))
 
     if (checkIfQuestionExists.length > 0) {
       // Update existing answer
@@ -155,22 +158,25 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
   const checkExistingAnswer = async () => {
     const existingAnswer = await db.select()
       .from(UserAnswer)
-      .where(eq(UserAnswer.mockIdRef, interviewData?.mockId))
-      .where(eq(UserAnswer.questionId, activeQuestionIndex.toString()));
+      .where(and(
+        eq(UserAnswer.mockIdRef, interviewData?.mockId),
+        gte(UserAnswer.questionId, activeQuestionIndex.toString()),
+        lte(UserAnswer.questionId, activeQuestionIndex.toString())
+      ))
+      .limit(1);
 
-    if (existingAnswer.length > 0) {
+    if (existingAnswer && existingAnswer.length > 0) {
       setUserAnswer(existingAnswer[0].userAnswer);
       return existingAnswer[0];
     }
+    setIsSubmitted(false)
     return null;
   };
 
   // Add useEffect to check for existing answer when question changes
   useEffect(() => {
-    if (interviewData?.mockId) {
-      checkExistingAnswer();
-    }
-  }, [activeQuestionIndex, interviewData?.mockId]);
+    checkExistingAnswer();
+  }, [activeQuestionIndex, isSubmitting, isSubmitted]);
 
   return (
     <div className='flex items-center justify-center flex-col'>
@@ -199,7 +205,7 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
             ${listening ? 'bg-red-500' : 'bg-primary'} 
             ${!isWebcamOpen ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           onClick={saveUserInput}
-          disabled={!isWebcamOpen || isSubmitting}
+          disabled={!isWebcamOpen || isSubmitting || isSubmitted}
         >
           {listening ? (
             <div className='flex items-center gap-2 animate-pulse'>
@@ -211,14 +217,14 @@ const RecordAnswerSection = ({ interviewData, mockInterviewQuestions, activeQues
             </div>
           )}
         </Button>
-        <Button variant='outline' className='p-6 cursor-pointer disabled:cursor-not-allowed' onClick={playUserAnswer} disabled={(userAnswer?.length < 10)} title='Play your answer'>
+        <Button variant='outline' className='p-6 cursor-pointer disabled:cursor-not-allowed' onClick={playUserAnswer} disabled={(userAnswer?.length < 5)} title='Play your answer'>
           {isPlaying ? (
             <Pause size={40} className='animate-pulse' />
           ) : (
             <Play size={40} />
           )}
         </Button>
-        <Button variant='outline' className='p-6 bg-primary text-white cursor-pointer disabled:cursor-not-allowed' onClick={submitAnswer} disabled={(userAnswer?.length < 10) || listening}>Submit</Button>
+        <Button variant='outline' className={`${isSubmitted ? 'bg-green-700' : 'bg-primary'} p-6 text-white cursor-pointer disabled:cursor-not-allowed`} onClick={submitAnswer} disabled={listening || userAnswer?.length < 5 || isSubmitted}>{isSubmitted ? 'Submitted' : 'Submit'}</Button>
       </div>
 
     </div>

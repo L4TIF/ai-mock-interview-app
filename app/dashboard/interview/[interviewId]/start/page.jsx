@@ -9,6 +9,7 @@ import QuestionSection from './_components/QuestionSection'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import ClientOnly from './_components/clientOnlyPage'
+import { toast } from 'sonner'
 
 
 // Dynamically import RecordAnswerSection with no SSR
@@ -25,21 +26,17 @@ const StartInterview = ({ params }) => {
     const [interviewData, setInterviewData] = React.useState(null)
     const [mockInterviewQuestions, setMockInterviewQuestions] = React.useState(null)
     const [activeQuestionIndex, setActiveQuestionIndex] = React.useState(0)
-    const [isAnswersEmpty, setIsAnswersEmpty] = React.useState(false)
-
+    
+    const router = useRouter()
 
     const checkIfAnswersEmpty = async () => {
         const res = await db.select().from(UserAnswer).where(eq(UserAnswer.mockIdRef, interviewId))
-        if (res.length !== 5) {
-            setIsAnswersEmpty(true)
-        } else {
-            setIsAnswersEmpty(false)
-        }
+        console.log(res,mockInterviewQuestions?.length)
+        return res.length !== mockInterviewQuestions?.length
     }
 
 
 
-    const router = useRouter()
 
     const fetchInterview = async () => {
         const res = await db.select().from(MockInterview).where(eq(MockInterview.mockId, interviewId))
@@ -48,9 +45,15 @@ const StartInterview = ({ params }) => {
         setMockInterviewQuestions(jsonMockInterviewQuestions)
     }
 
-    useEffect(() => {
-        checkIfAnswersEmpty()
-    }, [activeQuestionIndex])
+    const handleSubmit = async () => {
+        const isAnswersEmpty = await checkIfAnswersEmpty()
+        if (isAnswersEmpty) {
+            toast.error('Please answer all questions')
+            return
+        }
+        router.push(`/dashboard/interview/${interviewId}/feedback`)
+
+    }
 
     useEffect(() => {
         setIsLoading(true)
@@ -87,7 +90,7 @@ const StartInterview = ({ params }) => {
                     </Button>
                 )}
                 {activeQuestionIndex === mockInterviewQuestions?.length - 1 && (
-                    <Button variant='destructive' className={isAnswersEmpty ? 'cursor-not-allowed' : 'cursor-pointer'}  title={isAnswersEmpty ? 'Please answer all questions' : 'End Interview'} disabled={isAnswersEmpty} onClick={() => router.push(`/dashboard/interview/${interviewId}/feedback`)}>
+                    <Button variant='destructive' className='cursor-pointer' title='End Interview' onClick={handleSubmit}>
                         End Interview
                     </Button>
                 )}
