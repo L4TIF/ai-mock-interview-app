@@ -11,14 +11,11 @@ import { useRouter } from 'next/navigation'
 import ClientOnly from './_components/clientOnlyPage'
 import { toast } from 'sonner'
 
-
 // Dynamically import RecordAnswerSection with no SSR
 const RecordAnswerSection = dynamic(
     () => import('./_components/RecordAnswerSection'),
     { ssr: false }
 )
-
-
 
 const StartInterview = ({ params }) => {
     const { interviewId } = React.use(params)
@@ -26,17 +23,14 @@ const StartInterview = ({ params }) => {
     const [interviewData, setInterviewData] = React.useState(null)
     const [mockInterviewQuestions, setMockInterviewQuestions] = React.useState(null)
     const [activeQuestionIndex, setActiveQuestionIndex] = React.useState(0)
-    
+
     const router = useRouter()
 
     const checkIfAnswersEmpty = async () => {
         const res = await db.select().from(UserAnswer).where(eq(UserAnswer.mockIdRef, interviewId))
-        console.log(res,mockInterviewQuestions?.length)
+        console.log(res, mockInterviewQuestions?.length)
         return res.length !== mockInterviewQuestions?.length
     }
-
-
-
 
     const fetchInterview = async () => {
         const res = await db.select().from(MockInterview).where(eq(MockInterview.mockId, interviewId))
@@ -52,7 +46,6 @@ const StartInterview = ({ params }) => {
             return
         }
         router.push(`/dashboard/interview/${interviewId}/feedback`)
-
     }
 
     useEffect(() => {
@@ -67,18 +60,65 @@ const StartInterview = ({ params }) => {
 
     return (
         <div>
-            <div className='flex flex-col-reverse lg:grid lg:grid-cols-2 lg:gap-10'>
-                {/* Questions  */}
-                <QuestionSection mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} setActiveQuestionIndex={setActiveQuestionIndex} />
+            {/* Mobile Layout */}
+            <div className="lg:hidden space-y-6">
+                {/* Webcam and microphone recording */}
+                <ClientOnly>
+                    <RecordAnswerSection
+                        interviewData={interviewData}
+                        mockInterviewQuestions={mockInterviewQuestions}
+                        activeQuestionIndex={activeQuestionIndex}
+                    />
+                </ClientOnly>
+
+                {/* Navigation Buttons */}
+                <div className='flex items-center justify-end gap-4'>
+                    {activeQuestionIndex > 0 && (
+                        <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}>
+                            Previous Question
+                        </Button>
+                    )}
+                    {activeQuestionIndex < mockInterviewQuestions?.length - 1 && (
+                        <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex + 1)}>
+                            Next Question
+                        </Button>
+                    )}
+                    {activeQuestionIndex === mockInterviewQuestions?.length - 1 && (
+                        <Button variant='destructive' className='cursor-pointer' title='End Interview' onClick={handleSubmit}>
+                            End Interview
+                        </Button>
+                    )}
+                </div>
+
+                {/* Questions */}
+                <QuestionSection
+                    mockInterviewQuestions={mockInterviewQuestions}
+                    activeQuestionIndex={activeQuestionIndex}
+                    setActiveQuestionIndex={setActiveQuestionIndex}
+                />
+            </div>
+
+            {/* Desktop Layout */}
+            <div className='hidden lg:grid lg:grid-cols-2 lg:gap-10'>
+                {/* Questions */}
+                <QuestionSection
+                    mockInterviewQuestions={mockInterviewQuestions}
+                    activeQuestionIndex={activeQuestionIndex}
+                    setActiveQuestionIndex={setActiveQuestionIndex}
+                />
 
                 {/* Webcam and microphone recording */}
                 <ClientOnly>
-                    <RecordAnswerSection interviewData={interviewData} mockInterviewQuestions={mockInterviewQuestions} activeQuestionIndex={activeQuestionIndex} />
+                    <RecordAnswerSection
+                        interviewData={interviewData}
+                        mockInterviewQuestions={mockInterviewQuestions}
+                        activeQuestionIndex={activeQuestionIndex}
+                    />
                 </ClientOnly>
             </div>
 
-            {/* Navigation Buttons */}
-            <div className='flex items-center justify-end gap-4'>
+            {/* Navigation Buttons - Desktop */}
+            <div className='hidden lg:flex items-center justify-end gap-4 mt-6'>
                 {activeQuestionIndex > 0 && (
                     <Button onClick={() => setActiveQuestionIndex(activeQuestionIndex - 1)}>
                         Previous Question
