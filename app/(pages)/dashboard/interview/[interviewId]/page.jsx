@@ -32,9 +32,9 @@ const Interview = ({ params }) => {
         <>
             <div className='my-10 '>
                 <h1 className='text-2xl font-bold'>Let's start the interview</h1>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+                <div className='flex flex-col-reverse md:flex-row gap-5'>
 
-                    <div className='flex flex-col my-5 gap-5  '>
+                    <div className='flex flex-col my-5 gap-5 w-full '>
                         <div className='flex flex-col gap-5 p-5 border  rounded-lg'>
                             <h2 className='text-lg'><strong>Job Position:</strong> {interviewData?.jobPosition}</h2>
                             <h2 className='text-lg'><strong>Job Description:</strong> {interviewData?.jobDesc}</h2>
@@ -46,7 +46,7 @@ const Interview = ({ params }) => {
                         </div>
                     </div>
 
-                    <div className='flex flex-col items-center justify-between mb-5 h-[500px]'>
+                    <div className='flex flex-col items-center justify-between mb-5 h-[500px] w-full'>
                         {isWebcamOpen ? (
                             <div className='bg-secondary border rounded-lg w-full h-full'>
                             <Webcam
@@ -80,13 +80,13 @@ const Interview = ({ params }) => {
 
 
                 </div>
-                <div className={`flex justify-end ${isWebcamOpen ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
+                <div className={`flex md:justify-end justify-center ${isWebcamOpen ? 'cursor-pointer' : 'cursor-not-allowed'}`}>
                     {isWebcamOpen ? (
                         <Link href={`/dashboard/interview/${interviewId}/start`}>
                             <Button>Start Interview</Button>
                         </Link>
                     ) : (
-                        <Button className='w-fit' disabled>Start Interview</Button>
+                        <Button size='lg' className='w-fit' disabled>Start Interview</Button>
                     )}
                 </div>
             </div>

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button, Input, Textarea } from '@/components/ui';
 import GeminiPrompt from "@/utils/GeminiAiModel";
-import { LoaderCircle } from 'lucide-react';
+import { LoaderCircle, PlusIcon } from 'lucide-react';
 import { db } from "@/utils/db";
 import { MockInterview } from '@/utils/schema';
 import { v4 as uuidv4 } from 'uuid';
@@ -73,11 +73,11 @@ const AddNewInterview = () => {
 
     return (
         <div>
-            <div className='p-10 border rounded-lg bg-secondary hover:scale-105 hover:shadow-sm cursor-pointer transition-all'
+            <div className='p-5 w-56 border rounded-lg bg-secondary hover:scale-105 hover:shadow-sm cursor-pointer transition-all flex items-center justify-center gap-2'
                 onClick={() => setOpenDialog(true)}
             >
-                <h2 className='text-lg text-center' >
-                    + Add New
+                <h2 className='text-lg text-center flex items-center gap-2' >
+                    <PlusIcon className='w-5 h-5' /> Add New
                 </h2>
 
             </div>

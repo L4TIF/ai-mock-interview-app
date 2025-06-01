@@ -17,19 +17,22 @@ const Feedback = ({ params }) => {
   const [feedbackList, setFeedbackList] = React.useState([])
   const [overallRating, setOverallRating] = React.useState(0)
   const [isLoading, setIsLoading] = React.useState(true)
+  const [error, setError] = React.useState(null)
   const getFeedback = async () => {
     const response = await db.select().from(UserAnswer)
       .where(eq(UserAnswer.mockIdRef, interviewId))
       .orderBy(UserAnswer.questionId)
-
+    
     if (response.length > 0) {
       const totalRating = response.reduce((acc, feedback) => acc + parseInt(feedback.rating), 0)
       setOverallRating(totalRating / response.length)
       setFeedbackList(response)
-      console.log(response)
+    
       setIsLoading(false)
       return response
     }
+    setIsLoading(false)
+    setError('No feedback found')
     return []
   }
 
@@ -50,12 +53,16 @@ const Feedback = ({ params }) => {
     getFeedback()
   }, [])
 
+  
+
+
   if (isLoading) {
     return <div className='p-10 mt-20 flex gap-2 items-center justify-center'>
       <Loader2 className='w-10 h-10 animate-spin text-gray-400' />
       <h2 className='text-3xl font-bold text-green-500'>Loading Results...</h2>
     </div>
   }
+  if(error) return <div className='text-red-500 text-center mt-10 text-2xl'>No feedback found </div>
   return (
     <div className='p-10'>
       <h2 className='text-3xl font-bold text-green-500 text-center'>{headerMsg[Math.floor(overallRating) - 1]}</h2>
