@@ -10,6 +10,18 @@ const Header = () => {
     const path = usePathname()
     const router = useRouter()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const pathname = usePathname()
+    const handleNavigation = (path) => {
+        
+        // Check if we're in an interview
+        if (pathname?.includes('/interview/') && pathname?.includes('/start')) {
+            if (window.confirm('Are you sure you want to leave the interview? Your progress will be lost.')) {
+                router.push(path)
+            }
+        } else {
+            router.push(path)
+        }
+    }
 
     return (
         <div className='flex flex-col bg-secondary shadow-sm sticky top-0 z-50'>
@@ -34,7 +46,8 @@ const Header = () => {
                         width={80}
                         height={100}
                         alt='logo'
-                        onClick={() => router.push('/dashboard')}
+                        onClick={() => handleNavigation('/dashboard')}
+                        className="cursor-pointer"
                     />
                 </div>
 
@@ -42,22 +55,22 @@ const Header = () => {
                 <ul className='hidden md:flex gap-6'>
                     <li className={`cursor-pointer hover:text-primary transition-all
                         ${path === '/dashboard' && 'text-primary font-bold'}
-                        `} onClick={() => router.push('/dashboard')}
+                        `} onClick={() => handleNavigation('/dashboard')}
                     >Dashboard</li>
 
                     <li className={`cursor-pointer hover:text-primary transition-all
                         ${path === '/questions' && `text-primary font-bold`}
-                        `} onClick={() => router.push('/questions')}
+                        `} onClick={() => handleNavigation('/questions')}
                     >Questions</li>
 
                     <li className={`cursor-pointer hover:text-primary transition-all
                         ${path === '/upgrade' && `text-primary font-bold`}
-                        `} onClick={() => router.push('/upgrade')}
+                        `} onClick={() => handleNavigation('/upgrade')}
                     >Upgrade</li>
 
                     <li className={`cursor-pointer hover:text-primary transition-all
                         ${path === '/how-it-works' && `text-primary font-bold`}
-                        `} onClick={() => router.push('/how-it-works')}
+                        `} onClick={() => handleNavigation('/how-it-works')}
                     >How it Works?</li>
                 </ul>
 
@@ -73,7 +86,7 @@ const Header = () => {
                         <li className={`cursor-pointer hover:text-primary transition-all
                             ${path === '/dashboard' && 'text-primary font-bold'}
                             `} onClick={() => {
-                                router.push('/dashboard')
+                                handleNavigation('/dashboard')
                                 setIsMenuOpen(false)
                             }}
                         >Dashboard</li>
@@ -81,7 +94,7 @@ const Header = () => {
                         <li className={`cursor-pointer hover:text-primary transition-all
                             ${path === '/questions' && `text-primary font-bold`}
                             `} onClick={() => {
-                                router.push('/questions')
+                                handleNavigation('/questions')
                                 setIsMenuOpen(false)
                             }}
                         >Questions</li>
@@ -89,7 +102,7 @@ const Header = () => {
                         <li className={`cursor-pointer hover:text-primary transition-all
                             ${path === '/upgrade' && `text-primary font-bold`}
                             `} onClick={() => {
-                                router.push('/upgrade')
+                                handleNavigation('/upgrade')
                                 setIsMenuOpen(false)
                             }}
                         >Upgrade</li>
@@ -97,7 +110,7 @@ const Header = () => {
                         <li className={`cursor-pointer hover:text-primary transition-all
                             ${path === '/how-it-works' && `text-primary font-bold`}
                             `} onClick={() => {
-                                router.push('/how-it-works')
+                                handleNavigation('/how-it-works')
                                 setIsMenuOpen(false)
                             }}
                         >How it Works?</li>
