@@ -2,7 +2,6 @@
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { Check, Clock } from 'lucide-react'
-import Header from '../dashboard/_components/Header'
 
 export default function UpgradePage() {
     const router = useRouter()
@@ -59,8 +58,6 @@ export default function UpgradePage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
-
             <main className="container mx-auto px-4 py-12">
                 <div className="text-center mb-12">
                     <h1 className="text-3xl font-semibold mb-4">

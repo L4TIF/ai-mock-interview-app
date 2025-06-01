@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useState } from 'react'
-import Header from '../dashboard/_components/Header'
 
 export default function FAQPage() {
     const router = useRouter()
@@ -50,8 +49,6 @@ export default function FAQPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
-
             <main className="container mx-auto px-4 py-12">
                 <div className="text-center mb-12">
                     <h1 className="text-3xl font-semibold mb-4">

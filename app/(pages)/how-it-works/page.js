@@ -2,7 +2,6 @@
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { Mic, Brain, Video, Play, ArrowRight } from 'lucide-react'
-import Header from '../dashboard/_components/Header'
 
 export default function HowItWorksPage() {
     const router = useRouter()
@@ -32,8 +31,6 @@ export default function HowItWorksPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
-
             <main className="container mx-auto px-4 py-12">
                 <div className="text-center mb-16">
                     <h1 className="text-3xl font-semibold mb-4">

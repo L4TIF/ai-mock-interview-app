@@ -40,23 +40,23 @@ const Header = () => {
 
                 {/* Desktop Navbar */}
                 <ul className='hidden md:flex gap-6'>
-                    <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
+                    <li className={`cursor-pointer hover:text-primary transition-all
                         ${path === '/dashboard' && 'text-primary font-bold'}
                         `} onClick={() => router.push('/dashboard')}
                     >Dashboard</li>
 
-                    <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
-                        ${path === '/questions' && `text-primary`}
+                    <li className={`cursor-pointer hover:text-primary transition-all
+                        ${path === '/questions' && `text-primary font-bold`}
                         `} onClick={() => router.push('/questions')}
                     >Questions</li>
 
-                    <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
-                        ${path === '/upgrade' && `text-primary`}
+                    <li className={`cursor-pointer hover:text-primary transition-all
+                        ${path === '/upgrade' && `text-primary font-bold`}
                         `} onClick={() => router.push('/upgrade')}
                     >Upgrade</li>
 
-                    <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
-                        ${path === '/how-it-works' && `text-primary`}
+                    <li className={`cursor-pointer hover:text-primary transition-all
+                        ${path === '/how-it-works' && `text-primary font-bold`}
                         `} onClick={() => router.push('/how-it-works')}
                     >How it Works?</li>
                 </ul>
@@ -70,7 +70,7 @@ const Header = () => {
             {isMenuOpen && (
                 <div className='md:hidden border-t'>
                     <ul className='flex flex-col p-4 space-y-4'>
-                        <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
+                        <li className={`cursor-pointer hover:text-primary transition-all
                             ${path === '/dashboard' && 'text-primary font-bold'}
                             `} onClick={() => {
                                 router.push('/dashboard')
@@ -78,24 +78,24 @@ const Header = () => {
                             }}
                         >Dashboard</li>
 
-                        <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
-                            ${path === '/questions' && `text-primary`}
+                        <li className={`cursor-pointer hover:text-primary transition-all
+                            ${path === '/questions' && `text-primary font-bold`}
                             `} onClick={() => {
                                 router.push('/questions')
                                 setIsMenuOpen(false)
                             }}
                         >Questions</li>
 
-                        <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
-                            ${path === '/upgrade' && `text-primary`}
+                        <li className={`cursor-pointer hover:text-primary transition-all
+                            ${path === '/upgrade' && `text-primary font-bold`}
                             `} onClick={() => {
                                 router.push('/upgrade')
                                 setIsMenuOpen(false)
                             }}
                         >Upgrade</li>
 
-                        <li className={`cursor-pointer hover:text-primary hover:font-bold transition-all
-                            ${path === '/how-it-works' && `text-primary`}
+                        <li className={`cursor-pointer hover:text-primary transition-all
+                            ${path === '/how-it-works' && `text-primary font-bold`}
                             `} onClick={() => {
                                 router.push('/how-it-works')
                                 setIsMenuOpen(false)

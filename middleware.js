@@ -1,8 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/forum(.*)']);
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/forum(.*)', '/how-it-works(.*)', '/questions(.*)', '/upgrade(.*)']);
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)']);
+const isPublicRoute = createRouteMatcher(['/sign-in(.*)', '/sign-up(.*)', '/']);
 
 
 // uncomment this after create dashboard and have a landing page for non-auth users
